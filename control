@@ -1,0 +1,9 @@
+Package: com.example.floatingviewclone
+Name: floatingViewClone
+Version: 1.0.0
+Architecture: iphoneos-arm64e
+Description: 浮窗 / 三屏 / 环形菜单 —— floatingView 同构实现
+Maintainer: example
+Author: example
+Section: Tweaks
+Depends: mobilesubstrate, dev.theos.orion (>= 1.0.0), firmware (>= 15.0), preferenceloader

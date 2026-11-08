@@ -1,0 +1,5 @@
+packages/
+.theos/
+obj/
+*.log
+.DS_Store
