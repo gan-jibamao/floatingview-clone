@@ -1,7 +1,0 @@
-name: probe
-on: [workflow_dispatch, push]
-jobs:
-  linux:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "linux ok"; sw_vers || true; uname -a

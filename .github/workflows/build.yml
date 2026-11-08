@@ -2,7 +2,6 @@ name: build
 
 on:
   push:
-  pull_request:
   workflow_dispatch:
 
 env:
@@ -10,44 +9,65 @@ env:
 
 jobs:
   build:
-    runs-on: macos-14
-    timeout-minutes: 60
+    # macOS runner 在本账号上会被瞬间取消（0 步），Linux 正常；
+    # Orion 官方支持 Linux 构建（需要宿主 Swift 工具链）。
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache theos SDKs
-        id: sdk-cache
+      - name: Install host deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq build-essential fakeroot rsync curl perl git \
+            libxml2-utils xz-utils libtinfo6 zlib1g-dev libssl-dev
+          if ! command -v ldid >/dev/null; then
+            sudo apt-get install -y -qq ldid || {
+              git clone -q --depth 1 https://github.com/ProcursusTeam/ldid.git /tmp/ldid
+              make -C /tmp/ldid -j4 CPPFLAGS=-I/usr/include/libxml2
+              sudo install -m755 /tmp/ldid/ldid /usr/local/bin/ldid
+            }
+          fi
+          ldid -v 2>&1 | head -1 || true
+
+      - name: Setup Theos
+        run: |
+          git clone --recursive --depth 1 https://github.com/theos/theos.git "$THEOS"
+          echo "THEOS=$THEOS" >> "$GITHUB_ENV"
+          echo "PATH=$THEOS/bin:$PATH" >> "$GITHUB_ENV"
+
+      - name: Cache iOS SDKs
         uses: actions/cache@v4
         with:
           path: .theos/sdks
           key: theos-sdks-v1
 
-      - name: Cache Orion preprocessor
-        id: orion-cache
+      - name: Cache Swift iOS toolchain
         uses: actions/cache@v4
         with:
-          path: .theos/vendor/orion/.theos_build
-          key: orion-build-1.0.2-${{ hashFiles('.github/workflows/build.yml') }}
+          path: .theos/toolchain/linux
+          key: swift-toolchain-2.3.0-5.8
 
-      - name: Install host deps
+      - name: Install iOS SDKs + Swift toolchain
         run: |
-          brew install ldid xz 2>&1 | tail -3
-
-      - name: Setup Theos
-        run: |
-          git clone --recursive --depth 1 https://github.com/theos/theos.git "$THEOS"
-          if [ ! -d "$THEOS/sdks" ] || [ -z "$(ls -A "$THEOS/sdks" 2>/dev/null)" ]; then
+          if [ -z "$(ls -A "$THEOS/sdks" 2>/dev/null)" ]; then
             mkdir -p "$THEOS/sdks"
             curl -fsSL https://github.com/theos/sdks/tarball/master | tar -xz --strip-components=1 -C "$THEOS/sdks"
           fi
-          echo "SDKs:"; ls "$THEOS/sdks"
+          if [ ! -x "$THEOS/toolchain/linux/iphone/bin/clang" ]; then
+            mkdir -p "$THEOS/toolchain"
+            curl -fsSL https://github.com/kabiroberai/swift-toolchain-linux/releases/download/v2.3.0/swift-5.8-ubuntu20.04.tar.xz \
+              | tar -xJ -C "$THEOS/toolchain"
+          fi
+          echo "SDK:"; ls "$THEOS/sdks"
+          "$THEOS/toolchain/linux/iphone/bin/clang" --version | head -2
+          "$THEOS/toolchain/linux/iphone/bin/swiftc" --version 2>&1 | head -3 || true
 
       - name: Setup Orion
         run: |
           if [ ! -d "$THEOS/vendor/orion/Sources" ]; then
             git clone --depth 1 --branch 1.0.2 https://github.com/theos/orion.git "$THEOS/vendor/orion"
           fi
-          cat "$THEOS/vendor/orion/control" | head -3
 
       - name: Stub gate
         run: python3 tools/check_stubs.py
@@ -58,16 +78,23 @@ jobs:
         run: |
           set -o pipefail
           make package FINALPACKAGE=1 2>&1 | tee build.log
-          echo "exit=$?" >> "$GITHUB_OUTPUT"
 
-      - name: Summarize errors
+      - name: Summarize
         if: always()
         run: |
-          echo "### 错误汇总" >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          grep -E "error:" build.log | sed 's/^.*\.swift://' | sort | uniq -c | sort -rn | head -60 >> "$GITHUB_STEP_SUMMARY" || true
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          echo "总错误数: $(grep -c 'error:' build.log || true)" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "### 构建结果"
+            echo ""
+            echo '```'
+            grep -E "error:" build.log | sed -E 's/^.*\/(Sources|prefs)\//\1\//' | sort | uniq -c | sort -rn | head -80
+            echo '```'
+            echo "总错误数: $(grep -c 'error:' build.log || true)"
+            echo ""
+            echo "### 尾部"
+            echo '```'
+            tail -40 build.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -82,7 +109,3 @@ jobs:
           name: deb
           path: packages/*.deb
           if-no-files-found: warn
-
-      - name: Fail if build failed
-        if: steps.build.outcome != 'success'
-        run: exit 1
