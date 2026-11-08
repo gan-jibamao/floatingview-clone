@@ -11,7 +11,6 @@
 // 只有在事件进入系统之前读取原始触摸，才能实现「刘海/角落唤出」。
 
 import UIKit
-import IOKit.hid
 
 public final class FVIOEvent {
 

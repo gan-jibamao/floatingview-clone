@@ -123,6 +123,42 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)_handlePan:(id)gesture;
 @end
 
+#pragma mark - IOKit HID（私有/半公开 C API，SDK 无 Swift 模块）
+
+typedef struct __IOHIDEvent *IOHIDEvent;
+typedef struct __IOHIDEventSystemClient *IOHIDEventSystemClient;
+typedef uint32_t IOHIDEventField;
+typedef uint32_t IOHIDEventType;
+
+typedef void (*IOHIDEventSystemClientEventCallback)(void *target,
+                                                    void *refcon,
+                                                    void *sender,
+                                                    IOHIDEventType type,
+                                                    IOHIDEvent event,
+                                                    void *info);
+
+IOHIDEventSystemClient IOHIDEventSystemClientCreate(CFAllocatorRef allocator);
+void IOHIDEventSystemClientScheduleWithRunLoop(IOHIDEventSystemClient client,
+                                               CFRunLoopRef runLoop,
+                                               CFStringRef mode);
+void IOHIDEventSystemClientUnscheduleWithRunLoop(IOHIDEventSystemClient client,
+                                                 CFRunLoopRef runLoop,
+                                                 CFStringRef mode);
+void IOHIDEventSystemClientRegisterEventCallback(IOHIDEventSystemClient client,
+                                                 IOHIDEventSystemClientEventCallback callback,
+                                                 void *target,
+                                                 void *refcon);
+void IOHIDEventSystemClientUnregisterEventCallback(IOHIDEventSystemClient client,
+                                                   IOHIDEventSystemClientEventCallback callback,
+                                                   void *refcon);
+IOHIDEventType IOHIDEventGetType(IOHIDEvent event);
+CFArrayRef IOHIDEventGetChildren(IOHIDEvent event);
+double IOHIDEventGetFloatValue(IOHIDEvent event, IOHIDEventField field);
+
+#pragma mark - BackBoardServices
+
+void BKSHIDServicesCancelTouchesOnAllDisplays(void);
+
 #pragma mark - Preferences
 
 @interface PSSpecifier : NSObject
