@@ -48,18 +48,21 @@ jobs:
 
       - name: Install iOS SDKs + Swift toolchain
         run: |
+          set -euo pipefail
           if [ -z "$(ls -A "$THEOS/sdks" 2>/dev/null)" ]; then
-            mkdir -p "$THEOS/sdks"
-            curl -fsSL https://github.com/theos/sdks/tarball/master | tar -xz --strip-components=1 -C "$THEOS/sdks"
+            rm -rf "$THEOS/sdks"
+            git clone -q --depth 1 https://github.com/theos/sdks.git "$THEOS/sdks"
+            rm -rf "$THEOS/sdks/.git"
           fi
           if [ ! -x "$THEOS/toolchain/linux/iphone/bin/clang" ]; then
             mkdir -p "$THEOS/toolchain"
             curl -fsSL https://github.com/kabiroberai/swift-toolchain-linux/releases/download/v2.3.0/swift-5.8-ubuntu20.04.tar.xz \
               | tar -xJ -C "$THEOS/toolchain"
           fi
-          echo "SDK:"; ls "$THEOS/sdks"
-          "$THEOS/toolchain/linux/iphone/bin/clang" --version | head -2
-          "$THEOS/toolchain/linux/iphone/bin/swiftc" --version 2>&1 | head -3 || true
+          echo "SDK 数量: $(ls -d "$THEOS"/sdks/*.sdk 2>/dev/null | wc -l)"
+          ls -d "$THEOS"/sdks/*.sdk | head -5
+          test -n "$(ls -d "$THEOS"/sdks/*.sdk 2>/dev/null)" || { echo "SDK 缺失"; exit 1; }
+          "$THEOS/toolchain/linux/iphone/bin/swiftc" --version 2>&1 | head -2
 
       - name: Setup Orion
         run: |
@@ -107,3 +110,9 @@ jobs:
           name: deb
           path: packages/*.deb
           if-no-files-found: warn
+
+      - name: Enforce build result
+        if: steps.build.outcome != 'success'
+        run: |
+          echo "构建失败，见上方 build.log 与 job summary"
+          exit 1
