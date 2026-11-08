@@ -38,7 +38,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .theos/sdks
-          key: theos-sdks-v1
+          key: theos-sdks-v2
 
       - name: Cache Swift iOS toolchain
         uses: actions/cache@v4
@@ -49,7 +49,8 @@ jobs:
       - name: Install iOS SDKs + Swift toolchain
         run: |
           set -euo pipefail
-          if [ -z "$(ls -A "$THEOS/sdks" 2>/dev/null)" ]; then
+          # 注意：不能用「目录非空」判据——上一轮的残渣会被缓存原样塞回来
+          if ! ls -d "$THEOS"/sdks/*.sdk >/dev/null 2>&1; then
             rm -rf "$THEOS/sdks"
             git clone -q --depth 1 https://github.com/theos/sdks.git "$THEOS/sdks"
             rm -rf "$THEOS/sdks/.git"
