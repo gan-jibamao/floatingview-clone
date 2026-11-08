@@ -51,6 +51,18 @@ public final class FVScreenUtils {
 
     // MARK: - 屏幕旋转
 
+    /// UIDeviceOrientation -> UIInterfaceOrientation
+    /// 原版直接读 SpringBoard 的界面方向；这里做一次映射，避免把「竖屏正置」当「未知」。
+    public static func interfaceOrientation(from device: UIDeviceOrientation) -> UIInterfaceOrientation {
+        switch device {
+        case .portrait: return .portrait
+        case .portraitUpsideDown: return .portraitUpsideDown
+        case .landscapeLeft: return .landscapeRight   // 设备方向与界面方向左右相反
+        case .landscapeRight: return .landscapeLeft
+        default: return .portrait
+        }
+    }
+
     public func updateInterface(orientation: UIInterfaceOrientation) {
         switch orientation {
         case .landscapeLeft:  currentInterface = 1

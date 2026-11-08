@@ -5,7 +5,26 @@
 
 import UIKit
 
+public enum FVTouchPhase {
+    case began, moved, ended, cancelled, unknown
+}
+
 public final class FVGestureUtils {
+
+    /// 从 IOHID digitizer 子事件读触摸相位。
+    /// 字段号 0x10002 = kIOHIDEventFieldDigitizerTouch；取值 1/2/3 对应 began/moved/ended，
+    /// 需要按系统版本实测校准（原版同一处也没有硬编码符号名）。
+    public static func phase(of event: IOHIDEvent) -> FVTouchPhase {
+        let raw = IOHIDEventGetIntegerValue(event, IOHIDEventField(0x10002))
+        switch raw {
+        case 1: return .began
+        case 2: return .moved
+        case 3: return .ended
+        case 4: return .cancelled
+        default: return .unknown
+        }
+    }
+
     public static let shared = FVGestureUtils()
 
     public var currentIsTouchFloatingViewInnerRect = false

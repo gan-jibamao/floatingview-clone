@@ -237,6 +237,13 @@ public final class FVAppDispatchItem: UIView, UIGestureRecognizerDelegate {
 
     // MARK: - 手势并发
 
+    /// 复位移除前的视觉状态（原版在 removeCard 动画完成回调里调用）
+    public func reset() {
+        alpha = 1
+        transform = .identity
+        isHidden = false
+    }
+
     public func gestureRecognizer(_ g: UIGestureRecognizer,
                                   shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer) -> Bool {
         true

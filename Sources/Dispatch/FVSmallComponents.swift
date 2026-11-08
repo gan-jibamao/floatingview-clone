@@ -47,7 +47,7 @@ public final class FVBadgeView: UIView {
 // MARK: - FVLoadingView（UIActivityIndicatorView）
 
 public final class FVLoadingView: UIActivityIndicatorView {
-    public init(style: UIActivityIndicatorView.Style = .medium) {
+    public override init(style: UIActivityIndicatorView.Style = .medium) {
         super.init(style: style)
         hidesWhenStopped = true                    // 证据：setHidesWhenStopped
         color = .systemBlue
@@ -56,7 +56,7 @@ public final class FVLoadingView: UIActivityIndicatorView {
         super.init(frame: frame)
         hidesWhenStopped = true
     }
-    public required init?(coder: NSCoder) { super.init(coder: coder) }
+    public required init(coder: NSCoder) { super.init(coder: coder) }
 }
 
 // MARK: - FVButton（UIButton）
@@ -66,7 +66,7 @@ public final class FVButton: UIButton {
         super.init(frame: frame)
         titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
     }
-    public required init?(coder: NSCoder) { super.init(coder: coder) }
+    public required init(coder: NSCoder) { super.init(coder: coder) }
 }
 
 // MARK: - FVResizeMaskView（缩放遮罩）
@@ -85,7 +85,7 @@ public final class FVResizeMaskView: UIView {
         addSubview(imageView)
         isUserInteractionEnabled = false
     }
-    public required init?(coder: NSCoder) { super.init(coder: coder) }
+    public required init(coder: NSCoder) { super.init(coder: coder) }
 }
 
 // MARK: - FVDragLabelView（底部拖拽指示条，340 字节）
@@ -98,7 +98,7 @@ public final class FVDragLabelView: UIView {
         super.init(frame: frame)
         backgroundColor = .clear
     }
-    public required init?(coder: NSCoder) { super.init(coder: coder) }
+    public required init(coder: NSCoder) { super.init(coder: coder) }
 
     /// 证据：func.0003c1e8 的 convertRect —— 被拖动判定调用
     public func rectInWindow() -> CGRect {
@@ -118,7 +118,7 @@ public final class FVBottomToolBar: UIStackView {
         alignment = .center
         spacing = 6
     }
-    public required init?(coder: NSCoder) { super.init(coder: coder) }
+    public required init(coder: NSCoder) { super.init(coder: coder) }
 
     public func setItems(_ symbols: [String]) {
         arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -151,7 +151,7 @@ public final class FVBottomSideBar: UIStackView {
         axis = .horizontal
         distribution = .fillEqually
     }
-    public required init?(coder: NSCoder) { super.init(coder: coder) }
+    public required init(coder: NSCoder) { super.init(coder: coder) }
 
     public func setApps(_ bundleIdentifiers: [String]) {
         ids = bundleIdentifiers
@@ -199,7 +199,7 @@ public final class FVBottomView: UIView {
         ])
         toolBar = tb
     }
-    public required init?(coder: NSCoder) { super.init(coder: coder) }
+    public required init(coder: NSCoder) { super.init(coder: coder) }
 }
 
 // MARK: - FVBroadsideView（3596 字节，侧边横排）
@@ -212,7 +212,7 @@ public final class FVBroadsideView: UIView {
         super.init(frame: frame)
         backgroundColor = .clear
     }
-    public required init?(coder: NSCoder) { super.init(coder: coder) }
+    public required init(coder: NSCoder) { super.init(coder: coder) }
 
     /// 证据：func.0003a560（437ln）
     public func add(_ bundleIdentifier: String) {

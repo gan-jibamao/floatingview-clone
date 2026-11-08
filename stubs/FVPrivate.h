@@ -63,6 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (id)settings;
 - (id)uiSettings;
 - (void)updateSettingsWithBlock:(id)block;
+- (void)updateSettings:(id)settings withTransitionContext:(id)context completion:(id)completion;
 @end
 
 @interface FBSceneManager : NSObject
@@ -77,6 +78,50 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FBSystemServiceOpenApplicationRequest : NSObject
 - (void)_setPresentationContext:(id)context;
+@end
+
+#pragma mark - BackBoardServices / RunningBoard
+
+@interface BKSHIDEventDescriptor : NSObject
++ (instancetype)descriptorWithEventType:(unsigned int)type;
+@end
+
+@interface BKSHIDEventDeliveryManager : NSObject
++ (instancetype)sharedInstance;
+@end
+
+#pragma mark - DoNotDisturb
+
+@interface DNDState : NSObject
+- (id)activeModeConfiguration;
+@end
+
+#pragma mark - BannerKit / UserNotificationsUIKit
+
+@interface BNContentViewController : UIViewController
+- (void)viewWillAppear:(BOOL)animated;
+@end
+
+@interface NCNotificationShortLookViewController : UIViewController
+- (void)viewWillAppear:(BOOL)animated;
+@end
+
+#pragma mark - UIKit 私有
+
+@interface _UIKeyboardLayerHostView : UIView
+- (void)setFrame:(CGRect)frame;
+@end
+
+@interface UIKeyboardSceneDelegate : NSObject
+- (void)keyboardFrameDidChange;
+@end
+
+@interface UIRootSceneWindow : UIWindow
+- (void)didAddSubview:(UIView *)view;
+@end
+
+@interface UIUndoGestureInteraction : UIGestureRecognizer
+- (void)_handlePan:(id)gesture;
 @end
 
 #pragma mark - BackBoardServices / RunningBoard
@@ -159,6 +204,16 @@ double IOHIDEventGetFloatValue(IOHIDEvent event, IOHIDEventField field);
 
 void BKSHIDServicesCancelTouchesOnAllDisplays(void);
 
+@interface UIMutableApplicationSceneSettings : NSObject
+@property (nonatomic) CGRect frame;
+@property (nonatomic) UIUserInterfaceStyle userInterfaceStyle;
+@end
+
+#pragma mark - CoreTelephony（私有）
+
+bool CTCellularDataPlanGetIsEnabled(void);
+void CTCellularDataPlanSetIsEnabled(bool enabled);
+
 #pragma mark - Preferences
 
 @interface PSSpecifier : NSObject
@@ -225,5 +280,6 @@ void BKSHIDServicesCancelTouchesOnAllDisplays(void);
 @end
 
 NS_ASSUME_NONNULL_END
+
 
 #endif /* FV_PRIVATE_H */

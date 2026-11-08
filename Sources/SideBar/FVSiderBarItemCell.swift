@@ -15,7 +15,7 @@ public final class FVAppIconView: UIImageView {
 }
 
 public final class FVSiderBarItemCell: UICollectionViewCell {
-    public let imageView = FVAppIconView()
+    public let imageView = FVAppIconView(frame: .zero)
     public var bundleIdentifier: String = ""
 
     public override init(frame: CGRect) {

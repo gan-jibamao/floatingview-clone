@@ -118,7 +118,7 @@ public enum FVSceneHosting {
 
             let upSel = NSSelectorFromString("updateSettings:withTransitionContext:completion:")
             if scene.responds(to: upSel) {
-                _ = scene.perform(upSel, with: mutable, with: nil, with: nil)
+                scene.updateSettings(mutable, withTransitionContext: nil, completion: nil)
             }
         }
 

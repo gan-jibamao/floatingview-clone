@@ -83,7 +83,7 @@ public final class FVArcItem: UICollectionViewCell {
     public var itemClassify: FVArcItemType?
     public var levelNum: Int = 1
     public var pointValue: Int = 0
-    public let imageView = FVSysIconView()
+    public let imageView = FVSysIconView(frame: .zero)
     public let bgColorView = UIView()
 
     public override init(frame: CGRect) {

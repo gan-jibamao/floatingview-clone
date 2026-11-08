@@ -11,7 +11,7 @@
 
 import UIKit
 
-public final class FVHostingView: UIView {
+public class FVHostingView: UIView {
     public var currentActivityApp: NSObject?
     public var hostingView: UIView?
     public var isDisplay: Bool = false
@@ -110,8 +110,7 @@ public final class FVHostingView: UIView {
         hostingView?.frame = bounds
         if appScene != nil, let settings = appSetting {
             settings.frame = CGRect(origin: .zero, size: bounds.size)
-            appScene?.perform(NSSelectorFromString("updateSettings:withTransitionContext:completion:"),
-                              with: settings, with: nil, with: nil)
+            appScene?.updateSettings(settings, withTransitionContext: nil, completion: nil)
         }
     }
 }

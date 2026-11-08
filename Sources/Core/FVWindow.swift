@@ -7,7 +7,7 @@ import UIKit
 public final class FVWindow: UIWindow {
     public var _vc: FVViewController?
 
-    public init(windowScene: UIWindowScene) {
+    public override init(windowScene: UIWindowScene) {
         super.init(windowScene: windowScene)
         windowLevel = UIWindow.Level(rawValue: 27.0)   // 实证：立即数 27.0
         backgroundColor = .clear

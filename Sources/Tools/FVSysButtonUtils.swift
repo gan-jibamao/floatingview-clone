@@ -3,6 +3,7 @@
 // 32 个工具动作的执行器。每一条都按 IMPLEMENTATION.md §8 的表格用对应系统 API，
 // 不使用 simulateTouch / launchctl 之类暴力手段。
 
+import Foundation
 import UIKit
 import CoreTelephony
 
