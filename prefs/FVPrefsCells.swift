@@ -36,6 +36,12 @@ public struct SeatLabelCell  { public let name: String; public let subtitle: Str
 
 // MARK: - 转 PSSpecifier
 
+/// Preferences.framework 的 tbd 只导出了 PSListController / PSTableCell，
+/// PSButtonCell 这类子类在链接期不可见 —— 用运行时查名，查不到就退回 PSTableCell。
+private func fvCellClass(_ name: String) -> AnyClass {
+    NSClassFromString(name) ?? PSTableCell.self
+}
+
 public enum FVSpec {
 
     public static func group(_ c: GroupCell) -> PSSpecifier {
@@ -47,7 +53,7 @@ public enum FVSpec {
     }
 
     public static func staticText(_ c: StaticTextCell) -> PSSpecifier {
-        let s = PSSpecifier.preferenceSpecifierNamed(c.name, target: nil, set: nil, get: nil, detail: nil, cell: PSStaticTextCell.self, edit: nil)
+        let s = PSSpecifier.preferenceSpecifierNamed(c.name, target: nil, set: nil, get: nil, detail: nil, cell: fvCellClass("PSStaticTextCell"), edit: nil)
         s.identifier = c.key
         return s
     }
@@ -56,7 +62,7 @@ public enum FVSpec {
         let s = PSSpecifier.preferenceSpecifierNamed(c.name, target: nil,
                                                      set: #selector(FVPrefsValues.setBool(_:specifier:)),
                                                      get: #selector(FVPrefsValues.getBool(_:)),
-                                                     detail: nil, cell: PSSwitchCell.self, edit: nil)
+                                                     detail: nil, cell: fvCellClass("PSSwitchCell"), edit: nil)
         s.identifier = c.key
         s.setProperty(c.key, forKey: "key")
         s.setProperty(c.defaultValue, forKey: "default")
@@ -68,7 +74,7 @@ public enum FVSpec {
         let s = PSSpecifier.preferenceSpecifierNamed(c.name, target: nil,
                                                      set: #selector(FVPrefsValues.setDouble(_:specifier:)),
                                                      get: #selector(FVPrefsValues.getDouble(_:)),
-                                                     detail: nil, cell: PSSliderCell.self, edit: nil)
+                                                     detail: nil, cell: fvCellClass("PSSliderCell"), edit: nil)
         s.identifier = c.key
         s.setProperty(c.key, forKey: "key")
         s.setProperty(c.defaultValue, forKey: "default")
@@ -87,7 +93,7 @@ public enum FVSpec {
         let s = PSSpecifier.preferenceSpecifierNamed(c.name, target: nil,
                                                      set: #selector(FVPrefsValues.setString(_:specifier:)),
                                                      get: #selector(FVPrefsValues.getString(_:)),
-                                                     detail: nil, cell: PSSegmentCell.self, edit: nil)
+                                                     detail: nil, cell: fvCellClass("PSSegmentCell"), edit: nil)
         s.identifier = c.key
         s.setProperty(c.key, forKey: "key")
         s.setProperty(c.values, forKey: "validValues")
@@ -98,7 +104,7 @@ public enum FVSpec {
 
     public static func link(_ c: LinkCell) -> PSSpecifier {
         let s = PSSpecifier.preferenceSpecifierNamed(c.name, target: nil, set: nil, get: nil,
-                                                     detail: c.className, cell: PSLinkCell.self, edit: nil)
+                                                     detail: c.className, cell: fvCellClass("PSLinkCell"), edit: nil)
         s.identifier = c.key
         s.setProperty(c.key, forKey: "key")
         s.setProperty(c.isController, forKey: "isController")
@@ -109,7 +115,7 @@ public enum FVSpec {
 
     public static func button(_ c: ButtonCell) -> PSSpecifier {
         let s = PSSpecifier.preferenceSpecifierNamed(c.name, target: nil, set: nil, get: nil,
-                                                     detail: nil, cell: PSButtonCell.self, edit: nil)
+                                                     detail: nil, cell: fvCellClass("PSButtonCell"), edit: nil)
         s.identifier = c.key
         s.setProperty(c.action, forKey: "action")
         if let icon = c.icon { s.setProperty(icon, forKey: "iconImage") }
