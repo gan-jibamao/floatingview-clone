@@ -1,7 +1,7 @@
 Package: com.example.floatingviewclone
 Name: floatingViewClone
-Version: 1.0.0
-Architecture: iphoneos-arm64e
+Version: 0.1.0
+Architecture: iphoneos-arm64
 Description: 浮窗 / 三屏 / 环形菜单 —— floatingView 同构实现
 Maintainer: example
 Author: example
