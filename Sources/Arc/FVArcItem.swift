@@ -139,16 +139,6 @@ public final class FVArcItem: UICollectionViewCell {
     }
 }
 
-extension UIColor {
-    convenience init?(fvHex: String) {
-        var h = fvHex.trimmingCharacters(in: .whitespacesAndNewlines)
-        if h.hasPrefix("#") { h.removeFirst() }
-        guard h.count == 6, let v = UInt32(h, radix: 16) else { return nil }
-        self.init(red: CGFloat((v >> 16) & 0xFF) / 255,
-                  green: CGFloat((v >> 8) & 0xFF) / 255,
-                  blue: CGFloat(v & 0xFF) / 255,
-                  alpha: 1)
-    }
     var fvHex: String {
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         getRed(&r, green: &g, blue: &b, alpha: &a)

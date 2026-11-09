@@ -160,7 +160,7 @@ void CTCellularDataPlanSetIsEnabled(bool enabled);
 @interface PSSpecifier : NSObject
 + (instancetype)groupSpecifier;
 + (instancetype)preferenceSpecifierNamed:(NSString *)name
-                                  target:(id)target
+                                  target:(nullable id)target
                                      set:(nullable SEL)set
                                      get:(nullable SEL)get
                                   detail:(nullable Class)detail

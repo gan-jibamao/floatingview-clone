@@ -33,7 +33,7 @@ public final class ColorPickerTableCell: PSTableCell, UIColorPickerViewControlle
     }
 
     public override func refreshCellContents(withSpecifier specifier: PSSpecifier?) {
-        super.refreshCellContents(withSpecifier: specifier)
+        super.refreshCellContents(with: specifier)
         cellSpecifier = specifier
         let key = specifier?.property(forKey: "key") as? String ?? ""
         colorView?.backgroundColor = UIColor(fvHex: FVPrefsStore.shared.string(key)) ?? .systemBlue
@@ -61,7 +61,7 @@ public final class SeatLabelTableCell: PSTableCell {
     public required init?(coder: NSCoder) { super.init(coder: coder) }
 
     public override func refreshCellContents(withSpecifier specifier: PSSpecifier?) {
-        super.refreshCellContents(withSpecifier: specifier)
+        super.refreshCellContents(with: specifier)
         textLabel?.text = specifier?.name
         detailTextLabel?.text = specifier?.property(forKey: "subtitle") as? String
     }

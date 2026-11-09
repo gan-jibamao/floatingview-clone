@@ -39,7 +39,7 @@ public struct SeatLabelCell  { public let name: String; public let subtitle: Str
 public enum FVSpec {
 
     public static func group(_ c: GroupCell) -> PSSpecifier {
-        let s = PSSpecifier.groupSpecifier()
+        let s = PSSpecifier.group()
         s.name = c.name
         s.setProperty(c.footerText, forKey: "footerText")
         s.identifier = c.key

@@ -261,7 +261,7 @@ public final class FVSVFlotingActionViewPrefs: PSListController {
         FVFileManager.write("0.5", name: "verticalCenterY.txt")
         FVFileManager.write("0.5", name: "horizontalCenterX.txt")
         FVFileManager.write("0.5", name: "horizontalCenterY.txt")
-        FVNotificationCenter.post(.toggleMainFloatingAppDisplay)
+        FVNotify.post(.toggleMainFloatingAppDisplay)
     }
 }
 

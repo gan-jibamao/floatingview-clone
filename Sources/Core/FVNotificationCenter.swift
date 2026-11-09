@@ -19,13 +19,7 @@ import Foundation
 public final class FVNotificationCenter: NSObject {
     public static let shared = FVNotificationCenter()
 
-    public enum Event: String, CaseIterable {
-        case openFloatingView          = "fv_openFloatingView"
-        case openFloatingViewToSide    = "fv_openFloatingView_toSide"
-        case openFloatingViewLastRun   = "fv_openFloatingView_lastRun"
-        case closeMainFloatingApp      = "fv_closeMainFloatingApp"
-        case toggleMainFloatingAppDisplay = "fv_toggleMainFloatingAppDisplay"
-    }
+    public typealias Event = FVNotificationEvent
 
     public enum UserInfoKey {
         public static let bundleIdentifier = "bundleIdentifier"

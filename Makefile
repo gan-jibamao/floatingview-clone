@@ -3,7 +3,7 @@ export ARCHS   = arm64 arm64e
 export PACKAGE_VERSION = 0.1.0
 
 TWEAK_NAME = floatingViewClone
-floatingViewClone_FILES = $(shell find Sources -name '*.swift')
+floatingViewClone_FILES = $(shell find Sources Shared -name '*.swift')
 floatingViewClone_SWIFTFLAGS = -swift-version 5 -import-objc-header $(THEOS_PROJECT_DIR)/stubs/FVPrivate.h
 floatingViewClone_FRAMEWORKS = UIKit Foundation QuartzCore AVFAudio ReplayKit \
 	CoreImage CoreTelephony IOKit Orion
@@ -13,8 +13,10 @@ floatingViewClone_INSTALL_PATH = /Library/MobileSubstrate/DynamicLibraries
 
 BUNDLE_NAME = floatingViewClonePrefs
 # 设置 bundle 不能链接主 dylib，偏好模型要自己带一份
-floatingViewClonePrefs_FILES = $(shell find prefs -name '*.swift') \
-	Sources/Prefs/FVPrefsKeys.swift Sources/Prefs/FVPrefsStore.swift
+floatingViewClonePrefs_FILES = $(shell find prefs Shared -name '*.swift') \
+	Sources/Prefs/FVPrefsKeys.swift Sources/Prefs/FVPrefsStore.swift \
+	Sources/Support/FVLog.swift Sources/Tools/FVToolAction.swift \
+	Sources/Support/FVAppHelper.swift Sources/Core/FVFileManager.swift
 floatingViewClonePrefs_SWIFTFLAGS = -swift-version 5 -import-objc-header $(THEOS_PROJECT_DIR)/stubs/FVPrivate.h
 floatingViewClonePrefs_FRAMEWORKS = UIKit Foundation
 floatingViewClonePrefs_INSTALL_PATH = /Library/PreferenceBundles
