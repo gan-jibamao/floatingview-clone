@@ -32,7 +32,7 @@ public final class ColorPickerTableCell: PSTableCell, UIColorPickerViewControlle
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pick)))
     }
 
-    public override func refreshCellContents(withSpecifier specifier: PSSpecifier?) {
+    public override func refreshCellContents(with specifier: PSSpecifier?) {
         super.refreshCellContents(with: specifier)
         cellSpecifier = specifier
         let key = specifier?.property(forKey: "key") as? String ?? ""
@@ -43,7 +43,7 @@ public final class ColorPickerTableCell: PSTableCell, UIColorPickerViewControlle
         let p = UIColorPickerViewController()
         p.delegate = self
         p.selectedColor = colorView?.backgroundColor ?? .systemBlue
-        (window?.rootViewController ?? self).present(p, animated: true)
+        window?.rootViewController?.present(p, animated: true)
     }
 
     public func colorPickerViewControllerDidFinish(_ vc: UIColorPickerViewController) {
@@ -60,7 +60,7 @@ public final class SeatLabelTableCell: PSTableCell {
     }
     public required init?(coder: NSCoder) { super.init(coder: coder) }
 
-    public override func refreshCellContents(withSpecifier specifier: PSSpecifier?) {
+    public override func refreshCellContents(with specifier: PSSpecifier?) {
         super.refreshCellContents(with: specifier)
         textLabel?.text = specifier?.name
         detailTextLabel?.text = specifier?.property(forKey: "subtitle") as? String

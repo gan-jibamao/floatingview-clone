@@ -3,6 +3,7 @@
 // 所有 get/set 走 FVPrefsStore（含 Darwin 热重载）。
 
 import UIKit
+import UniformTypeIdentifiers
 
 // MARK: - 1) RootListController
 
@@ -62,7 +63,7 @@ public final class FVPrefsRootListController: PSListController {
     }
 
     @objc private func importPlist() {
-        let p = UIDocumentPickerViewController(forOpeningContentTypes: [.propertyList])
+        let p = UIDocumentPickerViewController(forOpeningContentTypes: [.propertyList], asCopy: true)
         p.delegate = self
         p.allowsMultipleSelection = false
         present(p, animated: true)
