@@ -141,6 +141,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 
+#pragma mark - 自有 C 桥（Sources/C/FVNotifyShim.c）
+
+void FVPostDarwin(const char *name);
+void FVObserveDarwin(const char *name, void (*handler)(const char *name));
+
 #pragma mark - BackBoardServices
 
 void BKSHIDServicesCancelTouchesOnAllDisplays(void);

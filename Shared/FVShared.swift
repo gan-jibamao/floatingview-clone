@@ -26,9 +26,6 @@ public enum FVNotificationEvent: String, CaseIterable {
 
 public enum FVNotify {
 
-    private static let darwin = CFNotificationCenterGetDarwinNotifyCenter()
-
-    /// 持有的闭包盒子；Darwin 回调只带得动一个裸指针。
     private final class Box {
         let handler: (String?) -> Void
         init(_ h: @escaping (String?) -> Void) { handler = h }
@@ -36,42 +33,27 @@ public enum FVNotify {
 
     private static var boxes: [String: Box] = [:]
 
-    private static let callback: CFNotificationCallback = { _, observer, name, object, _ in
-        guard let observer, let name else { return }
-        let key = Unmanaged<CFString>.fromOpaque(name).takeUnretainedValue() as String
-        var payload: String?
-        if let object {
-            payload = Unmanaged<CFString>.fromOpaque(object).takeUnretainedValue() as String
-        }
-        Unmanaged<Box>.fromOpaque(observer).takeUnretainedValue().handler(payload)
-        _ = key
-    }
-
+    /// 往 Darwin 通知总线发一条；同进程的观察者另走 NotificationCenter。
+    /// 注意：Darwin 带不了复杂 userInfo，payload 只在同进程内有效。
     public static func post(_ e: FVNotificationEvent, payload: String? = nil) {
-        CFNotificationCenterPostNotification(
-            darwin,
-            CFNotificationName(e.rawValue as CFString),
-            payload as CFString?,
-            nil,
-            true)
-        // 同进程观察者走本地中心（Darwin 不会回调自己）
+        FVPostDarwin(e.rawValue)
         NotificationCenter.default.post(name: Notification.Name(e.rawValue), object: payload)
     }
 
     public static func observe(_ e: FVNotificationEvent, _ handler: @escaping (String?) -> Void) {
-        let box = Box(handler)
-        boxes[e.rawValue] = box                     // 必须保活
-        CFNotificationCenterAddObserver(
-            darwin,
-            Unmanaged.passUnretained(box).toOpaque(),
-            callback,
-            e.rawValue as CFString,
-            nil,
-            .deliverImmediately)
-        // 本进程内也收一份
+        boxes[e.rawValue] = Box(handler)          // 保活
+        FVObserveDarwin(e.rawValue) { name in
+            guard let name else { return }
+            FVNotify.dispatch(String(cString: name))
+        }
+        // 本进程内也收一份（带 payload）
         NotificationCenter.default.addObserver(
             forName: Notification.Name(e.rawValue), object: nil, queue: .main
         ) { n in handler(n.object as? String) }
+    }
+
+    fileprivate static func dispatch(_ name: String) {
+        boxes[name]?.handler(nil)
     }
 }
 

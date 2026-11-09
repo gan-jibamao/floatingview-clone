@@ -3,7 +3,8 @@ export ARCHS   = arm64 arm64e
 export PACKAGE_VERSION = 0.1.1
 
 TWEAK_NAME = floatingViewClone
-floatingViewClone_FILES = $(shell find Sources Shared -name '*.swift')
+floatingViewClone_FILES = $(shell find Sources Shared -name '*.swift') \
+	$(shell find Sources -name '*.c')
 floatingViewClone_SWIFTFLAGS = -swift-version 5 -import-objc-header $(THEOS_PROJECT_DIR)/stubs/FVPrivate.h
 floatingViewClone_FRAMEWORKS = UIKit Foundation QuartzCore AVFAudio ReplayKit \
 	CoreImage CoreTelephony IOKit Orion
