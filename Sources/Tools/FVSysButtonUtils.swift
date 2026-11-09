@@ -242,12 +242,20 @@ public final class FVSysButtonUtils {
 
     // MARK: - 系统级动作
 
+    /// 执行外部二进制。iOS 没有 Process（NSTask 只在 macOS），走 posix_spawn。
+    /// 注意：SpringBoard 沙箱默认不允许 fork；真机上要么给 entitlement，要么走
+    /// SBMainWorkspace 的内部接口（下面那段就是后者）。
+    private func spawn(_ path: String, _ args: [String]) {
+        var argv: [UnsafeMutablePointer<CChar>?] = args.map { strdup($0) }
+        argv.append(nil)
+        defer { for p in argv where p != nil { free(p) } }
+        var pid = pid_t(0)
+        posix_spawn(&pid, path, nil, nil, argv, environ)
+    }
+
     private func killAllApps() {
         // 原版：/usr/bin/killall + SpringBoard 的清理接口
-        let p = Process()
-        p.executableURL = URL(fileURLWithPath: "/usr/bin/killall")
-        p.arguments = ["-9", "-m", "SpringBoard"]   // 只作示例；真实清理走 SBMainWorkspace
-        try? p.run()
+        spawn("/usr/bin/killall", ["killall", "-9", "-m", "SpringBoard"])   // 只作示例；真实清理走 SBMainWorkspace
         // 更正确：走 SBMainWorkspace 的 _removeAppLayout:forReason:
         if let cls = NSClassFromString("SBMainWorkspace") as? NSObject.Type,
            let any = (cls as AnyObject).perform(NSSelectorFromString("sharedInstance")),
@@ -260,10 +268,7 @@ public final class FVSysButtonUtils {
     }
 
     private func respring() {
-        let p = Process()
-        p.executableURL = URL(fileURLWithPath: "/usr/bin/killall")
-        p.arguments = ["-9", "SpringBoard"]
-        try? p.run()
+        spawn("/usr/bin/killall", ["killall", "-9", "SpringBoard"])
     }
 
     private func powerSleep() {

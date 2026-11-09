@@ -66,7 +66,7 @@ public final class FVButton: UIButton {
         super.init(frame: frame)
         titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
     }
-    public required init(coder: NSCoder) { super.init(coder: coder) }
+    public required init?(coder: NSCoder) { super.init(coder: coder) }
 }
 
 // MARK: - FVResizeMaskView（缩放遮罩）
@@ -85,7 +85,7 @@ public final class FVResizeMaskView: UIView {
         addSubview(imageView)
         isUserInteractionEnabled = false
     }
-    public required init(coder: NSCoder) { super.init(coder: coder) }
+    public required init?(coder: NSCoder) { super.init(coder: coder) }
 }
 
 // MARK: - FVDragLabelView（底部拖拽指示条，340 字节）
@@ -98,7 +98,7 @@ public final class FVDragLabelView: UIView {
         super.init(frame: frame)
         backgroundColor = .clear
     }
-    public required init(coder: NSCoder) { super.init(coder: coder) }
+    public required init?(coder: NSCoder) { super.init(coder: coder) }
 
     /// 证据：func.0003c1e8 的 convertRect —— 被拖动判定调用
     public func rectInWindow() -> CGRect {
@@ -199,7 +199,7 @@ public final class FVBottomView: UIView {
         ])
         toolBar = tb
     }
-    public required init(coder: NSCoder) { super.init(coder: coder) }
+    public required init?(coder: NSCoder) { super.init(coder: coder) }
 }
 
 // MARK: - FVBroadsideView（3596 字节，侧边横排）
@@ -212,7 +212,7 @@ public final class FVBroadsideView: UIView {
         super.init(frame: frame)
         backgroundColor = .clear
     }
-    public required init(coder: NSCoder) { super.init(coder: coder) }
+    public required init?(coder: NSCoder) { super.init(coder: coder) }
 
     /// 证据：func.0003a560（437ln）
     public func add(_ bundleIdentifier: String) {

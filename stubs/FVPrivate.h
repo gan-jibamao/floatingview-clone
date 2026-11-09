@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (id)settings;
 - (id)uiSettings;
 - (void)updateSettingsWithBlock:(id)block;
-- (void)updateSettings:(id)settings withTransitionContext:(id)context completion:(id)completion;
+- (void)updateSettings:(id)settings withTransitionContext:(nullable id)context completion:(nullable id)completion;
 @end
 
 @interface FBSceneManager : NSObject
@@ -108,6 +108,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - UIKit 私有
 
+@interface _UIKeyboardLayerHostView : UIView
+- (void)setFrame:(CGRect)frame;
+@end
+
+@interface UIKeyboardSceneDelegate : NSObject
+- (void)keyboardFrameDidChange;
+@end
+
 @interface UIRootSceneWindow : UIWindow
 - (void)didAddSubview:(UIView *)view;
 @end
@@ -132,38 +140,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 
-
-#pragma mark - IOKit HID（私有/半公开 C API，SDK 无 Swift 模块）
-
-typedef struct __IOHIDEvent *IOHIDEvent;
-typedef struct __IOHIDEventSystemClient *IOHIDEventSystemClient;
-typedef uint32_t IOHIDEventField;
-typedef uint32_t IOHIDEventType;
-
-typedef void (*IOHIDEventSystemClientEventCallback)(void *target,
-                                                    void *refcon,
-                                                    void *sender,
-                                                    IOHIDEventType type,
-                                                    IOHIDEvent event,
-                                                    void *info);
-
-IOHIDEventSystemClient IOHIDEventSystemClientCreate(CFAllocatorRef allocator);
-void IOHIDEventSystemClientScheduleWithRunLoop(IOHIDEventSystemClient client,
-                                               CFRunLoopRef runLoop,
-                                               CFStringRef mode);
-void IOHIDEventSystemClientUnscheduleWithRunLoop(IOHIDEventSystemClient client,
-                                                 CFRunLoopRef runLoop,
-                                                 CFStringRef mode);
-void IOHIDEventSystemClientRegisterEventCallback(IOHIDEventSystemClient client,
-                                                 IOHIDEventSystemClientEventCallback callback,
-                                                 void *target,
-                                                 void *refcon);
-void IOHIDEventSystemClientUnregisterEventCallback(IOHIDEventSystemClient client,
-                                                   IOHIDEventSystemClientEventCallback callback,
-                                                   void *refcon);
-IOHIDEventType IOHIDEventGetType(IOHIDEvent event);
-CFArrayRef IOHIDEventGetChildren(IOHIDEvent event);
-double IOHIDEventGetFloatValue(IOHIDEvent event, IOHIDEventField field);
 
 #pragma mark - BackBoardServices
 
@@ -245,6 +221,40 @@ void CTCellularDataPlanSetIsEnabled(bool enabled);
 @end
 
 NS_ASSUME_NONNULL_END
+
+#pragma mark - IOKit HID（私有/半公开 C API，SDK 无 Swift 模块）
+
+typedef struct __IOHIDEvent *IOHIDEvent;
+typedef struct __IOHIDEventSystemClient *IOHIDEventSystemClient;
+typedef uint32_t IOHIDEventField;
+typedef uint32_t IOHIDEventType;
+
+typedef void (*IOHIDEventSystemClientEventCallback)(void *target,
+                                                    void *refcon,
+                                                    void *sender,
+                                                    IOHIDEventType type,
+                                                    IOHIDEvent event,
+                                                    void *info);
+
+IOHIDEventSystemClient IOHIDEventSystemClientCreate(CFAllocatorRef allocator);
+void IOHIDEventSystemClientScheduleWithRunLoop(IOHIDEventSystemClient client,
+                                               CFRunLoopRef runLoop,
+                                               CFStringRef mode);
+void IOHIDEventSystemClientUnscheduleWithRunLoop(IOHIDEventSystemClient client,
+                                                 CFRunLoopRef runLoop,
+                                                 CFStringRef mode);
+void IOHIDEventSystemClientRegisterEventCallback(IOHIDEventSystemClient client,
+                                                 IOHIDEventSystemClientEventCallback callback,
+                                                 void *target,
+                                                 void *refcon);
+void IOHIDEventSystemClientUnregisterEventCallback(IOHIDEventSystemClient client,
+                                                   IOHIDEventSystemClientEventCallback callback,
+                                                   void *refcon);
+IOHIDEventType IOHIDEventGetType(IOHIDEvent event);
+CFArrayRef IOHIDEventGetChildren(IOHIDEvent event);
+double IOHIDEventGetFloatValue(IOHIDEvent event, IOHIDEventField field);
+long IOHIDEventGetIntegerValue(IOHIDEvent event, IOHIDEventField field);
+
 
 
 #endif /* FV_PRIVATE_H */
