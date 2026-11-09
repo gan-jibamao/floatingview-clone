@@ -17,7 +17,8 @@ BUNDLE_NAME = floatingViewClonePrefs
 floatingViewClonePrefs_FILES = $(shell find prefs Shared -name '*.swift') \
 	Sources/Prefs/FVPrefsKeys.swift Sources/Prefs/FVPrefsStore.swift \
 	Sources/Support/FVLog.swift Sources/Tools/FVToolAction.swift \
-	Sources/Support/FVAppHelper.swift Sources/Core/FVFileManager.swift
+	Sources/Support/FVAppHelper.swift Sources/Core/FVFileManager.swift \
+	$(shell find Sources/C -name '*.c')
 floatingViewClonePrefs_SWIFTFLAGS = -swift-version 5 -import-objc-header $(THEOS_PROJECT_DIR)/stubs/FVPrivate.h
 floatingViewClonePrefs_FRAMEWORKS = UIKit Foundation
 floatingViewClonePrefs_PRIVATE_FRAMEWORKS = Preferences
