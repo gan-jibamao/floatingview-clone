@@ -24,6 +24,11 @@
 > 注：行文中常被引用的「16 个钩子」实际是 15 个——第 16 项是把 `Tweak` 协议里的
 > `typealias Group` 误当钩子数进去的，那行本身在 Orion 里不成立，已删。
 
+## 真机校准
+
+**这个包还没在真机上验过 selector 与 IOHID 字段号。**
+装完第一件事是打开设置里的「钩子自检」，照 [CALIBRATION.md](CALIBRATION.md) 走一遍。
+
 ## 构建
 
 依赖 **Orion**（Swift hook DSL）与 theos。
