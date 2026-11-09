@@ -71,8 +71,22 @@ jobs:
             git clone --depth 1 --branch 1.0.2 https://github.com/theos/orion.git "$THEOS/vendor/orion"
           fi
 
+      - name: Cache Orion preprocessor
+        uses: actions/cache@v4
+        with:
+          path: .theos/vendor/orion/.theos_build
+          key: orion-cli-1.0.2-swift58-v1
+
       - name: Stub gate
         run: python3 tools/check_stubs.py
+
+      - name: Header syntax check
+        run: |
+          SDK="$THEOS/sdks/$(ls "$THEOS/sdks" | grep -m1 '^iPhoneOS')"
+          echo "SDK=$SDK"
+          "$THEOS/toolchain/linux/iphone/bin/clang" -fsyntax-only -x objective-c-header \
+            -isysroot "$SDK" -target arm64-apple-ios15.0 \
+            stubs/FVPrivate.h 2>&1 | head -40
 
       - name: Build
         id: build
