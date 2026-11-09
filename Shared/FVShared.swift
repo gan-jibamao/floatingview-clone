@@ -43,7 +43,6 @@ public enum FVNotify {
     public static func observe(_ e: FVNotificationEvent, _ handler: @escaping (String?) -> Void) {
         boxes[e.rawValue] = Box(handler)          // 保活
         FVObserveDarwin(e.rawValue) { name in
-            guard let name else { return }
             FVNotify.dispatch(String(cString: name))
         }
         // 本进程内也收一份（带 payload）
