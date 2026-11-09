@@ -184,7 +184,7 @@ void CTCellularDataPlanSetIsEnabled(bool enabled);
 @end
 
 @interface PSListController : UIViewController
-- (NSArray *)specifiers;
+- (nullable NSArray *)specifiers;
 - (PSSpecifier *)specifierForID:(NSString *)identifier;
 - (void)reloadSpecifiers;
 - (nullable PSSpecifier *)specifierAtIndex:(NSInteger)index;

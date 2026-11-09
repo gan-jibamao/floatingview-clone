@@ -12,7 +12,9 @@ floatingViewClone_PRIVATE_FRAMEWORKS = FrontBoard SpringBoard SpringBoardHome \
 floatingViewClone_INSTALL_PATH = /Library/MobileSubstrate/DynamicLibraries
 
 BUNDLE_NAME = floatingViewClonePrefs
-floatingViewClonePrefs_FILES = $(shell find prefs -name '*.swift')
+# 设置 bundle 不能链接主 dylib，偏好模型要自己带一份
+floatingViewClonePrefs_FILES = $(shell find prefs -name '*.swift') \
+	Sources/Prefs/FVPrefsKeys.swift Sources/Prefs/FVPrefsStore.swift
 floatingViewClonePrefs_SWIFTFLAGS = -swift-version 5 -import-objc-header $(THEOS_PROJECT_DIR)/stubs/FVPrivate.h
 floatingViewClonePrefs_FRAMEWORKS = UIKit Foundation
 floatingViewClonePrefs_INSTALL_PATH = /Library/PreferenceBundles
