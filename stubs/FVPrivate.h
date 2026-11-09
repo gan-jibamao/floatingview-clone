@@ -108,14 +108,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - UIKit 私有
 
-@interface _UIKeyboardLayerHostView : UIView
-- (void)setFrame:(CGRect)frame;
-@end
-
-@interface UIKeyboardSceneDelegate : NSObject
-- (void)keyboardFrameDidChange;
-@end
-
 @interface UIRootSceneWindow : UIWindow
 - (void)didAddSubview:(UIView *)view;
 @end
@@ -126,47 +118,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - BackBoardServices / RunningBoard
 
-@interface BKSHIDEventDescriptor : NSObject
-+ (instancetype)descriptorWithEventType:(unsigned int)type;
-@end
 
-@interface BKSHIDEventDeliveryManager : NSObject
-+ (instancetype)sharedInstance;
-@end
 
 #pragma mark - DoNotDisturb
 
-@interface DNDState : NSObject
-- (id)activeModeConfiguration;
-@end
 
 #pragma mark - BannerKit / UserNotificationsUIKit
 
-@interface BNContentViewController : UIViewController
-- (void)viewWillAppear:(BOOL)animated;
-@end
 
-@interface NCNotificationShortLookViewController : UIViewController
-- (void)viewWillAppear:(BOOL)animated;
-@end
 
 #pragma mark - UIKit 私有
 
-@interface _UIKeyboardLayerHostView : UIView
-- (void)setFrame:(CGRect)frame;
-@end
 
-@interface UIKeyboardSceneDelegate : NSObject
-- (void)keyboardFrameDidChange;
-@end
 
-@interface UIRootSceneWindow : UIWindow
-- (void)didAddSubview:(UIView *)view;
-@end
 
-@interface UIUndoGestureInteraction : UIGestureRecognizer
-- (void)_handlePan:(id)gesture;
-@end
 
 #pragma mark - IOKit HID（私有/半公开 C API，SDK 无 Swift 模块）
 

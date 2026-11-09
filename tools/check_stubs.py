@@ -16,6 +16,10 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# 这些类 theos 的 iPhoneOS SDK 里已经带了声明（UIKit 私有头），
+# 我们不能重复声明，否则 clang 报 duplicate interface definition。
+SDK_PROVIDED = {"_UIKeyboardLayerHostView", "UIKeyboardSceneDelegate"}
 STUB = os.path.join(ROOT, "stubs", "FVPrivate.h")
 
 
@@ -64,6 +68,8 @@ def main():
             hooks.append((os.path.relpath(f, ROOT), m.group(1)))
 
     for path, target in hooks:
+        if target in SDK_PROVIDED:
+            continue
         if target not in decl:
             errors.append(f"缺少桩头：{target}（{path} 里 ClassHook<{target}>）")
 
@@ -72,7 +78,7 @@ def main():
         text = strip_comments(read(f))
         for m in re.finditer(r"ClassHook<\s*(\w+)\s*>", text):
             target = m.group(1)
-            if target not in decl:
+            if target in SDK_PROVIDED or target not in decl:
                 continue
             for sel in sorted(set(re.findall(r"orig\.(\w+)\s*\(", text))):
                 if sel not in decl[target]:
