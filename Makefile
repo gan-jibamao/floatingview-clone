@@ -6,9 +6,8 @@ TWEAK_NAME = floatingViewClone
 floatingViewClone_FILES = $(shell find Sources -name '*.swift')
 floatingViewClone_SWIFTFLAGS = -swift-version 5 -import-objc-header $(THEOS_PROJECT_DIR)/stubs/FVPrivate.h
 floatingViewClone_FRAMEWORKS = UIKit Foundation QuartzCore AVFAudio ReplayKit \
-	CoreImage CoreTelephony IOKit
+	CoreImage CoreTelephony IOKit Orion
 floatingViewClone_PRIVATE_FRAMEWORKS = BackBoardServices
-floatingViewClone_LIBRARIES = orion
 floatingViewClone_INSTALL_PATH = /Library/MobileSubstrate/DynamicLibraries
 
 BUNDLE_NAME = floatingViewClonePrefs

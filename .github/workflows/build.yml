@@ -71,6 +71,20 @@ jobs:
             git clone --depth 1 --branch 1.0.2 https://github.com/theos/orion.git "$THEOS/vendor/orion"
           fi
 
+      - name: Install Orion.framework (link-time)
+        run: |
+          set -euo pipefail
+          if [ ! -f "$THEOS/vendor/lib/Orion.framework/Orion.tbd" ]; then
+            curl -fsSL -o /tmp/orion.zip \
+              https://github.com/theos/orion/releases/download/1.0.2/Orion_1.0.2.zip
+            rm -rf /tmp/orionx && mkdir -p /tmp/orionx
+            unzip -q /tmp/orion.zip -d /tmp/orionx
+            mkdir -p "$THEOS/vendor/lib"
+            rm -rf "$THEOS/vendor/lib/Orion.framework"
+            cp -a /tmp/orionx/Orion.framework "$THEOS/vendor/lib/"
+          fi
+          ls "$THEOS/vendor/lib/Orion.framework"
+
       - name: Cache Orion preprocessor
         uses: actions/cache@v4
         with:
