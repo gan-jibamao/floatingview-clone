@@ -1,8 +1,10 @@
 // FVShared.swift —— 主 dylib 与设置 bundle 共用的最小层
 //
-// 设置面板是独立进程（Settings.app 里），不能链接 floatingView.dylib，
-// 又需要发同样的通知、读同样的 plist、用同样的颜色解析。
-// 这里只放「两边都要、且不依赖 FVAmbient」的东西。
+// 设置面板跑在 Settings.app 进程里，SpringBoard 在另一个进程。
+// NotificationCenter.default 跨不了进程，所以这里走 Darwin notify：
+//   - 名字就是事件名
+//   - 字符串载荷放 object（Darwin 会把它塞进 userInfo["object"] 带过去）
+//   - 发送端同时在本进程 post 一份，方便同进程观察者
 
 import Foundation
 import UIKit
@@ -15,13 +17,61 @@ public enum FVNotificationEvent: String, CaseIterable {
     case openFloatingViewLastRun      = "fv_openFloatingView_lastRun"
     case closeMainFloatingApp         = "fv_closeMainFloatingApp"
     case toggleMainFloatingAppDisplay = "fv_toggleMainFloatingAppDisplay"
+
+    /// 诊断：让 SpringBoard 重新扫一遍钩子并把报告落盘
+    case runDiagnostics               = "fv_runDiagnostics"
+    /// 诊断：10 秒 IOHID 原始事件转储
+    case runIOHIDProbe                = "fv_runIOHIDProbe"
 }
 
 public enum FVNotify {
-    /// 只发不收。设置面板用这个；SpringBoard 侧的接收在 FVNotificationCenter。
-    public static func post(_ e: FVNotificationEvent, userInfo: [String: Any]? = nil) {
-        NotificationCenter.default.post(
-            name: Notification.Name(e.rawValue), object: nil, userInfo: userInfo)
+
+    private static let darwin = CFNotificationCenterGetDarwinNotifyCenter()
+
+    /// 持有的闭包盒子；Darwin 回调只带得动一个裸指针。
+    private final class Box {
+        let handler: (String?) -> Void
+        init(_ h: @escaping (String?) -> Void) { handler = h }
+    }
+
+    private static var boxes: [String: Box] = [:]
+
+    private static let callback: CFNotificationCallback = { _, observer, name, object, _ in
+        guard let observer, let name else { return }
+        let key = Unmanaged<CFString>.fromOpaque(name).takeUnretainedValue() as String
+        var payload: String?
+        if let object {
+            payload = Unmanaged<CFString>.fromOpaque(object).takeUnretainedValue() as String
+        }
+        Unmanaged<Box>.fromOpaque(observer).takeUnretainedValue().handler(payload)
+        _ = key
+    }
+
+    public static func post(_ e: FVNotificationEvent, payload: String? = nil) {
+        CFNotificationCenterPostNotification(
+            darwin,
+            CFNotificationName(e.rawValue as CFString),
+            payload as CFString?,
+            nil,
+            true)
+        // 同进程观察者走本地中心（Darwin 不会回调自己）
+        NotificationCenter.default.post(name: Notification.Name(e.rawValue), object: payload)
+    }
+
+    public static func observe(_ e: FVNotificationEvent, _ handler: @escaping (String?) -> Void) {
+        let box = Box(handler)
+        boxes[e.rawValue] = box                     // 必须保活
+        CFNotificationCenterAddObserver(
+            darwin,
+            Unmanaged.passUnretained(box).toOpaque(),
+            callback,
+            e.rawValue as CFString,
+            nil,
+            .deliverImmediately)
+        // 本进程内也收一份
+        NotificationCenter.default.addObserver(
+            forName: Notification.Name(e.rawValue), object: nil, queue: .main
+        ) { n in handler(n.object as? String) }
     }
 }
 

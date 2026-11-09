@@ -1,6 +1,6 @@
 export TARGET  = iphone:clang:16.5:15.0
 export ARCHS   = arm64 arm64e
-export PACKAGE_VERSION = 0.1.0
+export PACKAGE_VERSION = 0.1.1
 
 TWEAK_NAME = floatingViewClone
 floatingViewClone_FILES = $(shell find Sources Shared -name '*.swift')

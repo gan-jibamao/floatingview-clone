@@ -33,6 +33,15 @@ public final class FVPrefsRootListController: PSListController {
                                          action: nil,
                                          icon: UIImage(systemName: "square.grid.2x2"))))
 
+        list.append(FVSpec.group(GroupCell(name: "调试",
+                                           footerText: "真机校准：看钩子有没有真的挂上、IOHID 字段对不对",
+                                           key: "diagnostics_group")))
+        list.append(FVSpec.link(LinkCell(name: "钩子自检 / IOHID 探测",
+                                         className: FVDiagnosticsVC.self,
+                                         isController: true, key: "diagnostics",
+                                         action: nil,
+                                         icon: UIImage(systemName: "stethoscope"))))
+
         list.append(FVSpec.group(GroupCell(name: "", footerText: "",
                                            key: "operability_button_group")))
         list.append(FVSpec.button(ButtonCell(name: "导出配置(非备份配置)",
