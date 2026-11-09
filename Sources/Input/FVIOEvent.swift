@@ -59,7 +59,7 @@ public final class FVIOEvent {
         ioHIDClient = client
 
         let callback: IOHIDEventSystemClientEventCallback = { ctx, _, _, _, event, _ in
-            guard let ctx else { return }
+            guard let ctx, let event else { return }
             let me = Unmanaged<FVIOEvent>.fromOpaque(ctx).takeUnretainedValue()
             me.handle(event: event)
         }
